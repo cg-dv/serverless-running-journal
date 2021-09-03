@@ -63,7 +63,7 @@ resource "aws_iam_role" "lambda-execution-role-dynamodb-list" {
       Version = "2012-10-17"
       Statement = [
         {
-          Action   = "dynamodb:ListItems",
+          Action   = "dynamodb:List*",
           Effect   = "Allow",
           Resource = aws_dynamodb_table.serverless-app-table.arn
         }
@@ -88,7 +88,6 @@ resource "aws_lambda_function" "readItem" {
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
   s3_key            = data.aws_s3_bucket_object.read-item-function.key
   s3_object_version = null
-  #source_code_hash = filebase64sha256("lambda_function_payload.zip")
 
   runtime = "nodejs12.x"
 }
@@ -100,7 +99,6 @@ resource "aws_lambda_function" "writeItem" {
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
   s3_key            = data.aws_s3_bucket_object.write-item-function.key
   s3_object_version = null
-  #source_code_hash = filebase64sha256("lambda_function_payload.zip")
 
   runtime = "nodejs12.x"
 }
@@ -112,7 +110,6 @@ resource "aws_lambda_function" "listItems" {
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
   s3_key            = data.aws_s3_bucket_object.list-items-function.key
   s3_object_version = null
-  #source_code_hash = filebase64sha256("lambda_function_payload.zip")
 
   runtime = "nodejs12.x"
 }
