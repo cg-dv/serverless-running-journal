@@ -81,12 +81,22 @@ data "aws_s3_bucket_object" "readItem-function" {
   key    = "readItem.js.zip"
 }
 
+data "aws_s3_bucket_object" "writeItem-function" {
+  bucket = data.aws_s3_bucket.lambda-code-bucket.id
+  key    = "writeItem.js.zip"
+}
+
+data "aws_s3_bucket_object" "listItems-function" {
+  bucket = data.aws_s3_bucket.lambda-code-bucket.id
+  key    = "listItems.js.zip"
+}
+
 resource "aws_lambda_function" "readItem" {
   function_name     = "readItem"
-  role              = aws_iam_role.lambda-execution-role-dynamodb.arn
-  handler           = "submitRun.handler"
+  role              = aws_iam_role.lambda-execution-role-dynamodb-read.arn
+  handler           = "readItem.handler"
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
-  s3_key            = data.aws_s3_bucket_object.read-item-function.key
+  s3_key            = data.aws_s3_bucket_object.readItem-function.key
   s3_object_version = null
 
   runtime = "nodejs12.x"
@@ -94,10 +104,10 @@ resource "aws_lambda_function" "readItem" {
 
 resource "aws_lambda_function" "writeItem" {
   function_name     = "writeItem"
-  role              = aws_iam_role.lambda-execution-role-dynamodb.arn
-  handler           = "submitRun.handler"
+  role              = aws_iam_role.lambda-execution-role-dynamodb-write.arn
+  handler           = "writeItem.handler"
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
-  s3_key            = data.aws_s3_bucket_object.write-item-function.key
+  s3_key            = data.aws_s3_bucket_object.writeItem-function.key
   s3_object_version = null
 
   runtime = "nodejs12.x"
@@ -105,10 +115,10 @@ resource "aws_lambda_function" "writeItem" {
 
 resource "aws_lambda_function" "listItems" {
   function_name     = "listItems"
-  role              = aws_iam_role.lambda-execution-role-dynamodb.arn
-  handler           = "submitRun.handler"
+  role              = aws_iam_role.lambda-execution-role-dynamodb-list.arn
+  handler           = "listItems.handler"
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
-  s3_key            = data.aws_s3_bucket_object.list-items-function.key
+  s3_key            = data.aws_s3_bucket_object.listItems-function.key
   s3_object_version = null
 
   runtime = "nodejs12.x"
