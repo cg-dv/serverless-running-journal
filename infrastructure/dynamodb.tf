@@ -9,22 +9,22 @@ resource "aws_dynamodb_table" "serverless-app-table" {
     name = "RunId"
     type = "S"
   }
-  
+
   attribute {
     name = "Date"
-    type = "?"
+    type = "S"
   }
-  
+
   attribute {
     name = "Distance"
     type = "N"
   }
-  
+
   attribute {
     name = "Location"
     type = "S"
   }
-  
+
   attribute {
     name = "Notes"
     type = "S"
