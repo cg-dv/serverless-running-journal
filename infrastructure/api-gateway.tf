@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 resource "aws_api_gateway_rest_api" "run-log-api" {
   name = "run-log-api"
   endpoint_configuration {
@@ -10,7 +12,8 @@ resource "aws_lambda_permission" "allow-api-gateway" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.writeItem.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = aws_api_gateway_rest_api.run-log-api.execution_arn
+  source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.run-log-api.id}/*/*/*" 
+  #source_arn    = aws_api_gateway_rest_api.run-log-api.execution_arn:*
 
   depends_on = [
     aws_api_gateway_rest_api.run-log-api,
