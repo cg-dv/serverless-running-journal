@@ -51,6 +51,27 @@ resource "aws_iam_role" "lambda-execution-role-dynamodb-write" {
   }
 }
 
+resource "aws_iam_role" "lambda-execution-role-dynamodb-update" {
+  name               = "lambda-execution-role-dynamodb-update"
+  assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
+
+  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+
+  inline_policy {
+    name = "dynamodb-update"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action   = "dynamodb:UpdateItem",
+          Effect   = "Allow",
+          Resource = aws_dynamodb_table.serverless-app-table.arn
+        }
+      ]
+    })
+  }
+}
+
 resource "aws_iam_role" "lambda-execution-role-dynamodb-list" {
   name               = "lambda-execution-role-dynamodb-list"
   assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
@@ -86,10 +107,15 @@ data "aws_s3_bucket_object" "writeItem-function" {
   key    = "writeItem.js.zip"
 }
 
-data "aws_s3_bucket_object" "listItems-function" {
+data "aws_s3_bucket_object" "updateItem-function" {
   bucket = data.aws_s3_bucket.lambda-code-bucket.id
-  key    = "listItems.js.zip"
+  key    = "updateItem.js.zip"
 }
+
+#data "aws_s3_bucket_object" "listItems-function" {
+#bucket = data.aws_s3_bucket.lambda-code-bucket.id
+#key    = "listItems.js.zip"
+#}
 
 resource "aws_lambda_function" "readItem" {
   function_name     = "readItem"
@@ -113,13 +139,28 @@ resource "aws_lambda_function" "writeItem" {
   runtime = "nodejs12.x"
 }
 
-resource "aws_lambda_function" "listItems" {
-  function_name     = "listItems"
-  role              = aws_iam_role.lambda-execution-role-dynamodb-list.arn
-  handler           = "listItems.handler"
+resource "aws_lambda_function" "updateItem" {
+  function_name     = "updateItem"
+  role              = aws_iam_role.lambda-execution-role-dynamodb-update.arn
+  handler           = "updateItem.handler"
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
-  s3_key            = data.aws_s3_bucket_object.listItems-function.key
+  s3_key            = data.aws_s3_bucket_object.updateItem-function.key
   s3_object_version = null
 
   runtime = "nodejs12.x"
+}
+
+#resource "aws_lambda_function" "listItems" {
+#function_name     = "listItems"
+#role              = aws_iam_role.lambda-execution-role-dynamodb-list.arn
+#handler           = "listItems.handler"
+#s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
+#s3_key            = data.aws_s3_bucket_object.listItems-function.key
+#s3_object_version = null
+
+#runtime = "nodejs12.x"
+#}
+
+output "writeItem-Lambda-execution-role" {
+  value = aws_iam_role.lambda-execution-role-dynamodb-write.arn
 }
