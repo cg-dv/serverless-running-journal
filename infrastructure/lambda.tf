@@ -72,6 +72,27 @@ resource "aws_iam_role" "lambda-execution-role-dynamodb-update" {
   }
 }
 
+resource "aws_iam_role" "lambda-execution-role-dynamodb-delete" {
+  name               = "lambda-execution-role-dynamodb-delete"
+  assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
+
+  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+
+  inline_policy {
+    name = "dynamodb-delete"
+    policy = jsonencode({
+      Version = "2012-10-17"
+      Statement = [
+        {
+          Action   = "dynamodb:DeleteItem",
+          Effect   = "Allow",
+          Resource = aws_dynamodb_table.serverless-app-table.arn
+        }
+      ]
+    })
+  }
+}
+
 resource "aws_iam_role" "lambda-execution-role-dynamodb-list" {
   name               = "lambda-execution-role-dynamodb-list"
   assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
@@ -112,6 +133,11 @@ data "aws_s3_bucket_object" "updateItem-function" {
   key    = "updateItem.js.zip"
 }
 
+data "aws_s3_bucket_object" "deleteItem-function" {
+  bucket = data.aws_s3_bucket.lambda-code-bucket.id
+  key    = "deleteItem.js.zip"
+}
+
 #data "aws_s3_bucket_object" "listItems-function" {
 #bucket = data.aws_s3_bucket.lambda-code-bucket.id
 #key    = "listItems.js.zip"
@@ -145,6 +171,17 @@ resource "aws_lambda_function" "updateItem" {
   handler           = "updateItem.handler"
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
   s3_key            = data.aws_s3_bucket_object.updateItem-function.key
+  s3_object_version = null
+
+  runtime = "nodejs12.x"
+}
+
+resource "aws_lambda_function" "deleteItem" {
+  function_name     = "deleteItem"
+  role              = aws_iam_role.lambda-execution-role-dynamodb-delete.arn
+  handler           = "deleteItem.handler"
+  s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
+  s3_key            = data.aws_s3_bucket_object.deleteItem-function.key
   s3_object_version = null
 
   runtime = "nodejs12.x"

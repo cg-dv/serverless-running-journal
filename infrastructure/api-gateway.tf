@@ -46,6 +46,19 @@ resource "aws_lambda_permission" "allow-api-gateway-update" {
   ]
 }
 
+resource "aws_lambda_permission" "allow-api-gateway-delete" {
+  statement_id  = "AllowAPIInvoke"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.deleteItem.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn = "arn:aws:execute-api:us-east-1:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.run-log-api.id}/*/*/*" 
+
+  depends_on = [
+    aws_api_gateway_rest_api.run-log-api,
+    aws_lambda_function.deleteItem
+  ]
+}
+
 #resource "aws_api_gateway_authorizer" "run-log-auth" {
 #name          = "run-log-auth"
 #type          = "COGNITO_USER_POOLS"
@@ -69,6 +82,12 @@ resource "aws_api_gateway_resource" "update" {
   rest_api_id = aws_api_gateway_rest_api.run-log-api.id
   parent_id   = aws_api_gateway_rest_api.run-log-api.root_resource_id
   path_part   = "updateItem"
+}
+
+resource "aws_api_gateway_resource" "delete" {
+  rest_api_id = aws_api_gateway_rest_api.run-log-api.id
+  parent_id   = aws_api_gateway_rest_api.run-log-api.root_resource_id
+  path_part   = "deleteItem"
 }
 
 #resource "aws_api_gateway_resource" "list" {
@@ -96,6 +115,14 @@ resource "aws_api_gateway_method" "serverless-post-method" {
 resource "aws_api_gateway_method" "serverless-post-method-update" {
   rest_api_id   = aws_api_gateway_rest_api.run-log-api.id
   resource_id   = aws_api_gateway_resource.update.id
+  http_method   = "POST"
+  authorization = "NONE"
+  #authorizer_id = aws_api_gateway_authorizer.run-log-auth.id
+}
+
+resource "aws_api_gateway_method" "serverless-post-method-delete" {
+  rest_api_id   = aws_api_gateway_rest_api.run-log-api.id
+  resource_id   = aws_api_gateway_resource.delete.id
   http_method   = "POST"
   authorization = "NONE"
   #authorizer_id = aws_api_gateway_authorizer.run-log-auth.id
@@ -132,6 +159,15 @@ resource "aws_api_gateway_integration" "update-integration" {
   integration_http_method = aws_api_gateway_method.serverless-post-method-update.http_method
   uri                     = aws_lambda_function.updateItem.invoke_arn
   resource_id             = aws_api_gateway_resource.update.id
+  rest_api_id             = aws_api_gateway_rest_api.run-log-api.id
+  type                    = "AWS_PROXY"
+}
+
+resource "aws_api_gateway_integration" "delete-integration" {
+  http_method             = aws_api_gateway_method.serverless-post-method-delete.http_method
+  integration_http_method = aws_api_gateway_method.serverless-post-method-delete.http_method
+  uri                     = aws_lambda_function.deleteItem.invoke_arn
+  resource_id             = aws_api_gateway_resource.delete.id
   rest_api_id             = aws_api_gateway_rest_api.run-log-api.id
   type                    = "AWS_PROXY"
 }
