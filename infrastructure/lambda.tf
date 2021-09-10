@@ -9,105 +9,37 @@ data "aws_iam_policy_document" "lambda-assume-role-policy" {
   }
 }
 
-resource "aws_iam_role" "lambda-execution-role-dynamodb-read" {
+resource "aws_iam_role" "lambda-execution-role-CRUD-query-scan" {
   name               = "lambda-execution-role-dynamodb-read"
   assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
 
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
 
   inline_policy {
-    name = "dynamodb-read"
+    name = "dynamodb-CRUD-query-scan"
     policy = jsonencode({
       Version = "2012-10-17"
       Statement = [
         {
-          Action   = "dynamodb:GetItem",
+          Action   = [
+            "dynamodb:DeleteItem",
+            "dynamodb:GetItem",
+            "dynamodb:PutItem",
+            "dynamodb:Query",
+            "dynamodb:Scan",
+            "dynamodb:Update"
+          ],
           Effect   = "Allow",
           Resource = aws_dynamodb_table.serverless-app-table.arn
-        }
-      ]
-    })
-  }
-}
-
-resource "aws_iam_role" "lambda-execution-role-dynamodb-write" {
-  name               = "lambda-execution-role-dynamodb-write"
-  assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
-
-  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
-
-  inline_policy {
-    name = "dynamodb-write"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
+        },
         {
-          Action   = "dynamodb:PutItem",
+          Action = [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ],
           Effect   = "Allow",
-          Resource = aws_dynamodb_table.serverless-app-table.arn
-        }
-      ]
-    })
-  }
-}
-
-resource "aws_iam_role" "lambda-execution-role-dynamodb-update" {
-  name               = "lambda-execution-role-dynamodb-update"
-  assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
-
-  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
-
-  inline_policy {
-    name = "dynamodb-update"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action   = "dynamodb:UpdateItem",
-          Effect   = "Allow",
-          Resource = aws_dynamodb_table.serverless-app-table.arn
-        }
-      ]
-    })
-  }
-}
-
-resource "aws_iam_role" "lambda-execution-role-dynamodb-delete" {
-  name               = "lambda-execution-role-dynamodb-delete"
-  assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
-
-  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
-
-  inline_policy {
-    name = "dynamodb-delete"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action   = "dynamodb:DeleteItem",
-          Effect   = "Allow",
-          Resource = aws_dynamodb_table.serverless-app-table.arn
-        }
-      ]
-    })
-  }
-}
-
-resource "aws_iam_role" "lambda-execution-role-dynamodb-list" {
-  name               = "lambda-execution-role-dynamodb-list"
-  assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
-
-  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
-
-  inline_policy {
-    name = "dynamodb-list"
-    policy = jsonencode({
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action   = "dynamodb:List*",
-          Effect   = "Allow",
-          Resource = aws_dynamodb_table.serverless-app-table.arn
+          Resource = "*" 
         }
       ]
     })
@@ -145,7 +77,7 @@ data "aws_s3_bucket_object" "deleteItem-function" {
 
 resource "aws_lambda_function" "readItem" {
   function_name     = "readItem"
-  role              = aws_iam_role.lambda-execution-role-dynamodb-read.arn
+  role              = aws_iam_role.lambda-execution-role-CRUD-query-scan.arn
   handler           = "readItem.handler"
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
   s3_key            = data.aws_s3_bucket_object.readItem-function.key
