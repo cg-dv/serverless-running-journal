@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "lambda-assume-role-policy" {
 }
 
 resource "aws_iam_role" "lambda-execution-role-CRUD-query-scan" {
-  name               = "lambda-execution-role-dynamodb-read"
+  name               = "lambda-execution-role-CRUD-query-scan"
   assume_role_policy = data.aws_iam_policy_document.lambda-assume-role-policy.json
 
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
@@ -21,7 +21,7 @@ resource "aws_iam_role" "lambda-execution-role-CRUD-query-scan" {
       Version = "2012-10-17"
       Statement = [
         {
-          Action   = [
+          Action = [
             "dynamodb:DeleteItem",
             "dynamodb:GetItem",
             "dynamodb:PutItem",
@@ -39,7 +39,7 @@ resource "aws_iam_role" "lambda-execution-role-CRUD-query-scan" {
             "logs:PutLogEvents"
           ],
           Effect   = "Allow",
-          Resource = "*" 
+          Resource = "*"
         }
       ]
     })
@@ -60,7 +60,7 @@ resource "aws_lambda_function" "CRUD-list" {
   role              = aws_iam_role.lambda-execution-role-CRUD-query-scan.arn
   handler           = "CRUDList.handler"
   s3_bucket         = data.aws_s3_bucket.lambda-code-bucket.id
-  s3_key            = data.aws_s3_bucket_object.readItem-function.key
+  s3_key            = data.aws_s3_bucket_object.CRUDList-function.key
   s3_object_version = null
 
   runtime = "nodejs12.x"
