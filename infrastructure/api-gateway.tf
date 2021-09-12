@@ -57,6 +57,13 @@ resource "aws_api_gateway_method_response" "method-response" {
   status_code = "200"
 }
 
+resource "aws_api_gateway_integration_response" "integration-response" {
+  rest_api_id = aws_api_gateway_rest_api.run-log-api.id
+  resource_id = aws_api_gateway_resource.any.id
+  http_method = aws_api_gateway_method.serverless-post-method.http_method
+  status_code = "200" 
+}
+
 resource "aws_api_gateway_deployment" "example" {
   rest_api_id = aws_api_gateway_rest_api.run-log-api.id
 
@@ -64,14 +71,18 @@ resource "aws_api_gateway_deployment" "example" {
     create_before_destroy = true
   }
 
-  depends_on = [
-    aws_lambda_function.CRUD-list,
-    aws_api_gateway_rest_api.run-log-api,
-    #aws_api_gateway_authorizer.run-log-auth,
-    aws_api_gateway_resource.any,
-    aws_api_gateway_method.serverless-post-method,
-    aws_api_gateway_integration.CRUD-integration
-  ]
+ triggers = {
+    
+    redeployment = sha1(jsonencode([
+        aws_lambda_function.CRUD-list.id,
+        aws_api_gateway_rest_api.run-log-api.id,
+        #aws_api_gateway_authorizer.run-log-auth.id,
+        aws_api_gateway_resource.any.id,
+        aws_api_gateway_method.serverless-post-method.id,
+        aws_api_gateway_method_response.method-response.id,
+        aws_api_gateway_integration.CRUD-integration.id
+    ]))
+  }
 }
 
 output "api-gateway-invoke-url" {
