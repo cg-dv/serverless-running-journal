@@ -80,6 +80,7 @@ resource "aws_api_gateway_deployment" "example" {
         aws_api_gateway_resource.any.id,
         aws_api_gateway_method.serverless-post-method.id,
         aws_api_gateway_method_response.method-response.id,
+        aws_api_gateway_integration_response.integration-response.id,
         aws_api_gateway_integration.CRUD-integration.id
     ]))
   }
