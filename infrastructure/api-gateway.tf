@@ -61,7 +61,9 @@ resource "aws_api_gateway_integration_response" "integration-response" {
   rest_api_id = aws_api_gateway_rest_api.run-log-api.id
   resource_id = aws_api_gateway_resource.any.id
   http_method = aws_api_gateway_method.serverless-post-method.http_method
-  status_code = "200" 
+  status_code = "200"
+
+  depends_on = [aws_api_gateway_integration.CRUD-integration]
 }
 
 resource "aws_api_gateway_deployment" "example" {
@@ -84,6 +86,24 @@ resource "aws_api_gateway_deployment" "example" {
         aws_api_gateway_integration.CRUD-integration.id
     ]))
   }
+}
+
+resource "aws_api_gateway_stage" "example" {
+  deployment_id = aws_api_gateway_deployment.example.id
+  rest_api_id   = aws_api_gateway_rest_api.run-log-api.id
+  stage_name    = "prod"
+
+  depends_on = [aws_api_gateway_deployment.example]
+}
+
+module "cors" {
+  source = "squidfunk/api-gateway-enable-cors/aws"
+  version = "0.3.3"
+
+  api_id          = aws_api_gateway_rest_api.run-log-api.id
+  api_resource_id = aws_api_gateway_resource.any.id
+
+  depends_on = [aws_api_gateway_stage.example]
 }
 
 output "api-gateway-invoke-url" {
