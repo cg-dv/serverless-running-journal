@@ -1,6 +1,6 @@
 function scanFromAPI(e) {
     e.preventDefault();
-    var URL = "https://2cgj2wj6na.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
+    var URL = "https://aqlh969bj8.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
 
     var request = {
       "operation": "list",
@@ -11,7 +11,7 @@ function scanFromAPI(e) {
    
     $.ajax({
       type: "POST",
-      url: "https://2cgj2wj6na.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
+      url: "https://aqlh969bj8.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
       dataType: "json",
       crossDomain: "true",
       contentType: "application/json; charset=utf-8",
@@ -26,13 +26,6 @@ function scanFromAPI(e) {
             alert("No data in run log.  Submit new entries and refresh page to view entries here.");
         }
         
-        //console.log(typeof(data.Items));
-        //data.Items.sort(function(a, b){
-            //return a.Date - b.Date;
-        //});
-        //console.log(data.Items);
- 
-
         for (let i = 0; i < data.Items.length; i++) {
             const title = document.createElement('h2');
             const p1 = document.createElement('p');
@@ -42,7 +35,7 @@ function scanFromAPI(e) {
             const b1 = document.createElement('button');
             const b2 = document.createElement('button');
             const br = document.createElement('br');
-
+            
             title.textContent = "Run ID: " + data.Items[i].RunId;
             p1.textContent = "Date: " + data.Items[i].Date;
             p2.textContent = "Distance: " + data.Items[i].Distance;
@@ -50,13 +43,14 @@ function scanFromAPI(e) {
             p4.textContent = "Notes: " + data.Items[i].Notes;
             b1.innerHTML = "Update";
             //b1.setAttribute('onClick', formUpdate(event, data.Items[i].RunId));
+            b2.type = "button";
             b2.innerHTML = "Delete";
-            //b2.setAttribute("onClick", "deleteAPI(String(data.Items[i].RunId), " + "String(data.Items[i].Date))");
-            b2.setAttribute("onClick", "deleteAPI(event)");
             b2.setAttribute("id", "delete" + i);
+            b2.addEventListener('click', function(){
+                deleteAPI(data.Items[i].RunId);
+            });
             
             const form = document.getElementById("run-log");
-            //document.body.appendChild(title);
             form.appendChild(title);
             form.appendChild(p1);
             form.appendChild(p2);
