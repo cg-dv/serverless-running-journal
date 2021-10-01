@@ -1,6 +1,6 @@
 function scanFromAPI(e) {
     e.preventDefault();
-    var URL = "https://aqlh969bj8.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
+    var URL = "https://69mu9xokbh.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
 
     var request = {
       "operation": "list",
@@ -11,7 +11,7 @@ function scanFromAPI(e) {
    
     $.ajax({
       type: "POST",
-      url: "https://aqlh969bj8.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
+      url: "https://69mu9xokbh.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
       dataType: "json",
       crossDomain: "true",
       contentType: "application/json; charset=utf-8",
@@ -35,14 +35,20 @@ function scanFromAPI(e) {
             const b1 = document.createElement('button');
             const b2 = document.createElement('button');
             const br = document.createElement('br');
-            
+
             title.textContent = "Run ID: " + data.Items[i].RunId;
             p1.textContent = "Date: " + data.Items[i].Date;
             p2.textContent = "Distance: " + data.Items[i].Distance;
             p3.textContent = "Location: " + data.Items[i].Location;
             p4.textContent = "Notes: " + data.Items[i].Notes;
+            b1.type = "button";
             b1.innerHTML = "Update";
-            //b1.setAttribute('onClick', formUpdate(event, data.Items[i].RunId));
+            b1.setAttribute("id", "update" + i);
+            b1.addEventListener('click', function(){
+                var win = window.open("update-form.html", "");
+                var runidInput = (win.document.getElementById("runid-input"));
+                runidInput.value = data.Items[i].RunId;
+            });
             b2.type = "button";
             b2.innerHTML = "Delete";
             b2.setAttribute("id", "delete" + i);
