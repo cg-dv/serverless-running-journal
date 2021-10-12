@@ -27,7 +27,7 @@ resource "aws_iam_role" "lambda-execution-role-CRUD-query-scan" {
             "dynamodb:PutItem",
             "dynamodb:Query",
             "dynamodb:Scan",
-            "dynamodb:Update"
+            "dynamodb:UpdateItem"
           ],
           Effect   = "Allow",
           Resource = aws_dynamodb_table.serverless-app-table.arn
