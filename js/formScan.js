@@ -1,6 +1,6 @@
 function scanFromAPI(e) {
     e.preventDefault();
-    var URL = "https://69mu9xokbh.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
+    var URL = "https://i80ljjtcuf.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
 
     var request = {
       "operation": "list",
@@ -11,7 +11,7 @@ function scanFromAPI(e) {
    
     $.ajax({
       type: "POST",
-      url: "https://69mu9xokbh.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
+      url: "https://i80ljjtcuf.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
       dataType: "json",
       crossDomain: "true",
       contentType: "application/json; charset=utf-8",
