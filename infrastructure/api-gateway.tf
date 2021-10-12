@@ -20,13 +20,6 @@ resource "aws_lambda_permission" "allow-api-gateway-CRUD-query-scan" {
   ]
 }
 
-#resource "aws_api_gateway_authorizer" "run-log-auth" {
-#name          = "run-log-auth"
-#type          = "COGNITO_USER_POOLS"
-#rest_api_id   = aws_api_gateway_rest_api.run-log-api.id
-#provider_arns = ["arn:aws:cognito-idp:us-east-1:414402433373:userpool/us-east-1_M1mWlsyXz"]
-#}
-
 resource "aws_api_gateway_resource" "any" {
   rest_api_id = aws_api_gateway_rest_api.run-log-api.id
   parent_id   = aws_api_gateway_rest_api.run-log-api.root_resource_id
@@ -78,7 +71,6 @@ resource "aws_api_gateway_deployment" "example" {
     redeployment = sha1(jsonencode([
         aws_lambda_function.CRUD-list.id,
         aws_api_gateway_rest_api.run-log-api.id,
-        #aws_api_gateway_authorizer.run-log-auth.id,
         aws_api_gateway_resource.any.id,
         aws_api_gateway_method.serverless-post-method.id,
         aws_api_gateway_method_response.method-response.id,
