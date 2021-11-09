@@ -65,7 +65,3 @@ resource "aws_lambda_function" "CRUD-list" {
 
   runtime = "nodejs12.x"
 }
-
-output "writeItem-Lambda-execution-role" {
-  value = aws_iam_role.lambda-execution-role-CRUD-query-scan.arn
-}
