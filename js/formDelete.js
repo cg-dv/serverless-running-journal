@@ -1,6 +1,6 @@
 function deleteAPI(runid) {
     //e.preventDefault();
-    var URL = "https://i80ljjtcuf.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
+    var URL = "https://pjj72ktn29.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
    
     var request = {
       "operation": "delete",
@@ -14,7 +14,7 @@ function deleteAPI(runid) {
     
     $.ajax({
       type: "POST",
-      url: "https://i80ljjtcuf.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
+      url: "https://pjj72ktn29.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
       dataType: "json",
       crossDomain: "true",
       contentType: "application/json; charset=utf-8",

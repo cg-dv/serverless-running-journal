@@ -1,0 +1,31 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="js/formUpdate.js"></script>
+</head>
+
+<form id="update-form" method="post" action="https://pjj72ktn29.api-id.execute-api.us-east-1.amazonaws.com/prod/CRUDList">
+      
+      <h4>Update Run Entry:</h4>
+
+      <h4>Run ID:</h4>
+      <input type="text" id="runid-input" name="runid-selection"
+       value=""
+      >
+      
+      <h4>Date:</h4>
+      <input type="date" id="date-input" name="date-selection"
+       value=""
+       min="1920-01-01" max="2080-01-01">
+
+      <h4>Distance:</h4>
+      <input type="number" style="height:35px;" id="distance-input" placeholder="Enter length of run" class="form-control" style="width:100%;" /><br/>
+      
+      <h4>Location:</h4>
+      <input type="text" style="height:35px;" id="location-input" placeholder="Enter location of run" class="form-control" style="width:100%;"/><br/>
+      
+      <h4>Notes</h4>
+      <textarea id="notes-input" rows="3" placeholder="Enter notes" class="form-control" style="width:100%;"></textarea><br/>
+      
+      <button type="button" onClick="formUpdate()" class="btn btn-lg" style="margin-top:20px;">Submit</button>
+</form>

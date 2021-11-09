@@ -1,6 +1,6 @@
 function formUpdate() {
     //e.preventDefault();
-    var URL = "https://i80ljjtcuf.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
+    var URL = "https://pjj72ktn29.execute-api.us-east-1.amazonaws.com/prod/CRUDList";
 
     var distancere = /[0-9]{1}/;
     if (!distancere.test($("#distance-input").val())) {
@@ -36,7 +36,7 @@ function formUpdate() {
    
     $.ajax({
       type: "POST",
-      url: "https://i80ljjtcuf.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
+      url: "https://pjj72ktn29.execute-api.us-east-1.amazonaws.com/prod/CRUDList",
       dataType: "json",
       crossDomain: "true",
       contentType: "application/json; charset=utf-8",

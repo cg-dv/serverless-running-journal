@@ -1,0 +1,15 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="js/formUpdate.js"></script>
+    <script src="js/formDelete.js"></script>
+    <script src="js/formScan.js"></script>
+</head>
+
+<body>
+<form id="run-log" method="post" action="https://pjj72ktn29.execute-api.us-east-1.amazonaws.com/prod/CRUDList">
+      
+      
+      <button type="button" onClick="scanFromAPI(event)" class="btn btn-lg" style="margin-top:20px;">Fetch Run Log Entries</button>
+</form>
+</body>
